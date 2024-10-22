@@ -1,17 +1,12 @@
 from openai import OpenAI
-key = open("key1.py", "r").readline().strip('\n')
-print(key)
-client = OpenAI(api_key=key)
 
-completion = client.chat.completions.create(
+client = OpenAI()
+
+stream = client.chat.completions.create(
     model="gpt-4o-mini",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
-        {
-            "role": "user",
-            "content": "Write a haiku about recursion in programming."
-        }
-    ]
+    messages=[{"role": "user", "content": "Say this is a test"}],
+    stream=True,
 )
-
-print(completion.choices[0].message)
+for chunk in stream:
+    if chunk.choices[0].delta.content is not None:
+        print(chunk.choices[0].delta.content, end="")
